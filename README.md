@@ -1,2 +1,2 @@
 # Prompt-engineering
-introduction about Prompt Engineering
+介绍提示词工程的技术，包括零样本提示、少样本提示、思维链、思维树、检索增强生成等
