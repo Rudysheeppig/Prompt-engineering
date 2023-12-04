@@ -18,7 +18,7 @@ HuggingGPT是浙江大学、微软亚洲研究院合作开发的开源项目，�
 
 下面我们以一个真实的用户问题实例，来进行讲解：
 
-![avatar](/Prompt-engineering/image/huggingGPT-example.png)
+![example](/image/huggingGPT-example.png)
 
 我们看一下用户问题：你能描述一下这张照片是什么？以及图片中的有多少个实体？问题和这张照片作为输入，传递到chatGPT，通过语义理解和分析，主要是和图像相关，规划了图像相关的几个任务。
 然后，在HuggingFace中选择对应任务的的模型，像图像识别、实体检测等。接着，根据任务，执行相应的模型，并将结果返回给ChatGPT。最后，ChatGPT利用返回各个模型的返回的结果，生成答案，包括两部分：图片描述为“一群长颈鹿和斑马在田野里吃草”，实体检测结果是“有5个，分别是XX及得分”，还把对应的动物用红框框了出来；并且还会说明是怎么得到这个结果，分别使用了 image classification, object detection和image caption三个任务，以及对应的任务所选择的模型。
