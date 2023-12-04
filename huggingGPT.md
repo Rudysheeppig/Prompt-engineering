@@ -79,11 +79,16 @@ HuggingGPT是以ChatGPT为控制器，专家模型为执行者的一个合作系
 ### 如何规划任务
 HuggingGPT在接收到request后，将其解构为一个结构化任务的序列，并且需要识别这些任务之间的依赖关系和执行顺序。为了让LM做高效的任务规划，HuggingGPT在设计中使用specification-based instruction和demonstration-based parsing。
 
+![example](/image/model-selection.png)
+
+![example](/image/response.png)
+
+![example](/image/task-planning.png)
+
+![example](/image/task.png)
+
 Specification-based Instruction
 Task specification提供一个统一的模板来允许LLM进行任务解析。HuggingGPT提供四个槽，分别是task type，task ID，task dependencies和task arguments：
-
-
-
 
 
 
