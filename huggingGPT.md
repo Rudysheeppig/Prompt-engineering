@@ -155,10 +155,11 @@ LLM 的快速发展给学术界和工业界带来了巨大的影响。我们希�
 
 ## 使用说明
 HuggingGPT已经在GitHub上公开，并且持续在演进，地址如下：https://github.com/microsoft/JARVIS。
+![example](/image/github.png)
 
 从服务器下载和运行 HuggingGPT ：
 
-'''
+```
 # setup env
 cd server
 conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch 
@@ -174,15 +175,16 @@ sh download.sh
 cd ..
 python bot_server.py
 python model_server.py
-'''
+```
 
 从 web 运行 HuggingGPT 的方法如下：
 
-'''
+
+```
 cd web
 npm install
 npm run dev
-'''
+```
 
 ## 参考资料
 
