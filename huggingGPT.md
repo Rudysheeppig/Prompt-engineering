@@ -1,8 +1,3 @@
-参考：
-https://zhuanlan.zhihu.com/p/619896296
-https://blog.csdn.net/youcans/article/details/129927345
-
-
 HuggingGPT是浙江大学、微软亚洲研究院合作开发的开源项目，以chatGPT和Hugging Face为基础构建的一个框架，融合LLM能力以及AI领域模型的能力，来解决不同领域和模态的AI任务。项目地址是：https://github.com/microsoft/JARVIS。 项目名称借鉴了漫威《钢铁侠》中人工智能管家的名称，也传递了项目想要实现通用人工智能的愿景。
 
 ## 背景&原理
