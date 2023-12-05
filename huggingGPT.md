@@ -144,16 +144,13 @@ gpt-3.5-turbo和text-davinci-003，设置temperature=0，logit_bias=0.2，prompt
 - 系统稳定性：一是在大型语言模型的推理过程中通常是不可控的。大型语言模型在推理时偶尔会不符合指令，并且输出格式可能会超出预期，从而导致程序工作流中出现异常。二是HuggingFace的推理端点上托管的专家模型的状态不可控。HuggingFace上的专家模型可能会受到网络延迟或服务状态的影响，导致任务执行阶段出现错误。
 
 ## 总结
-HuggingGPT以语言为接口，将LLM与人工智能模型连接起来，来系统解决人工智能任务。
-
+HuggingGPT以语言为接口，将LLM与人工智能模型连接起来，来系统解决人工智能任务。    
 LLM可以被视为管理人工智能模型的控制器，并且可以利用HuggingFace等机器学习社区的模型来解决用户的不同请求。通过利用LLM在理解和推理方面的优势来剖析用户的意图，并将任务分解为多个子任务。然后，基于专家模型描述，HuggingGPT为每个任务分配最合适的模型，并集成不同模型的结果。通过利用来自机器学习社区的众多人工智能模型的能力，HuggingGPT在解决具有挑战性的人工智能任务方面展现了巨大的潜力。
 
 ## 使用说明
-HuggingGPT已经在GitHub上公开，并且持续在演进，地址如下：https://github.com/microsoft/JARVIS。
-![example](/image/github.png)
-
-从服务器下载和运行 HuggingGPT ：
-
+HuggingGPT已经在GitHub上公开，并且持续在演进，地址如下：https://github.com/microsoft/JARVIS。  
+![example](/image/github.png)  
+从服务器下载和运行 HuggingGPT ：  
 ```
 # setup env
 cd server
@@ -180,10 +177,7 @@ cd web
 npm install
 npm run dev
 ```
-
 ## 参考资料
-
-论文下载地址：https://arxiv.org/pdf/2303.17580.pdf
-
+论文下载地址：https://arxiv.org/pdf/2303.17580.pdf    
 开源代码：https://github.com/microsoft/JARVIS
 
