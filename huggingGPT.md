@@ -136,13 +136,57 @@ gpt-3.5-turbo和text-davinci-003，设置temperature=0，logit_bias=0.2，prompt
 
 接着是一些可视化的结果，这里不做阐述。
 
-## 不足
-效率
-在每个回合中，HuggingGPT需要至少一次和LLM的交互。这些交互很大程度上增加了response的延迟，并且导致用户体验的下降。
+## 限制与不足
+尽管HuggingGPT 提出了人工智能解决方案的新范式，但仍然存在一些局限性或改进空间： 
+- 任务规划严重依赖LLM的能力：大模型并不能100%确保生成的计划始终是可行且最优的，因此，探索优化LLM的方法至关重要，进而提升规任务划能力。
+- 效率：效率的瓶颈在于对大型语言模型的推理。对于每一轮用户请求，HuggingGPT 都需要在任务规划、模型选择和响应生成阶段至少与大型语言模型进行一次交互，大大增加了响应延迟，并导致用户体验下降。 
+- 最大上下文长度的限制：受 LLM 可以接受的最大令牌数量的限制，HuggingGPT 面临着最大上下文长度的限制。我们使用了会话窗口，在任务规划阶段只跟踪了会话上下文来缓解它。 
+- 系统稳定性：一是在大型语言模型的推理过程中通常是不可控的。大型语言模型在推理时偶尔会不符合指令，并且输出格式可能会超出预期，从而导致程序工作流中出现异常。二是HuggingFace的推理端点上托管的专家模型的状态不可控。HuggingFace上的专家模型可能会受到网络延迟或服务状态的影响，导致任务执行阶段出现错误。
 
-最大文本限制
-受限于LLM能接受的最大文本数量，HuggingGPT也面临着最大文本长度限制的问题。作者通过只追踪任务规划阶段的对话文本来减少文本。
+## 总结
+我们提出了 HuggingGPT 系统来解决人工智能任务，该系统以语言为接口将 LLM 与人工智能模型连接起来。
 
-稳定性
-LM也许会不听指令
-专家模型也许会不受控**
+HuggingGPT 系统的原理是，LLM 可以被视为管理人工智能模型的控制器，并且可以利用HuggingFace 等机器学习社区的模型来解决用户的不同请求。
+
+通过利用 LLM 在理解和推理方面的优势来剖析用户的意图，并将任务分解为多个子任务。然后，基于专家模型描述，HuggingGPT 为每个任务分配最合适的模型，并集成不同模型的结果。通过利用来自机器学习社区的众多人工智能模型的能力，HuggingGPT 在解决具有挑战性的人工智能任务方面展现了巨大的潜力。
+
+LLM 的快速发展给学术界和工业界带来了巨大的影响。我们希望 HuggingGPT 模型的设计能够促进 LLM 的发展，为迈向 AGI 提供新的道路。
+
+
+## 使用说明
+HuggingGPT已经在GitHub上公开，并且持续在演进，地址如下：https://github.com/microsoft/JARVIS。
+
+从服务器下载和运行 HuggingGPT ：
+
+'''
+# setup env
+cd server
+conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch 
+pip install git+https://github.com/huggingface/diffusers.git
+pip install git+https://github.com/huggingface/transformers
+pip install -r requirements.txt
+
+# download models
+cd models
+sh download.sh
+
+# run server
+cd ..
+python bot_server.py
+python model_server.py
+'''
+
+从 web 运行 HuggingGPT 的方法如下：
+
+'''
+cd web
+npm install
+npm run dev
+'''
+
+## 参考资料
+
+论文下载地址：https://arxiv.org/pdf/2303.17580.pdf
+
+开源代码：https://github.com/microsoft/JARVIS
+
