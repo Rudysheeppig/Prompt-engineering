@@ -39,11 +39,7 @@ HuggingGPT 可以看作是一个协作系统，以ChatGPT为控制器，以专�
 3. 专家模型在推理端点上执行分配的任务，并将执行信息和推理结果返回给ChatGPT。
 4. 最后，ChatGPT总结执行过程日志和推理结果，并将信息整合返回给用户。
 
-
-
-
 ### 如何规划任务
-
 在第一个阶段，大型语言模型接受用户的请求，将其分解为一系列结构化任务。  
 复杂的请求通常涉及多个任务，大型语言模型需要确定这些任务的依赖关系和执行顺序。为了提示大型语言模型进行有效的任务规划，HuggingGPT在其提示设计中采用了基于规范的指令和基于演示的解析。  
 基于规范的指令任务规范为任务提供了统一的模板，并允许大型语言模型通过槽位归档进行任务解析。HuggingGPT 为任务解析设计了四个接口，分别是任务类型、任务ID、任务依赖项和任务参数：
@@ -51,39 +47,14 @@ HuggingGPT 可以看作是一个协作系统，以ChatGPT为控制器，以专�
 - task id：任务 ID 为任务规划提供了一个唯一的标识符，用于引用相关任务及其生成的资源。
 - task type：任务类型涵盖语言、视觉、视频、音频等不同任务。HuggingGPT当前支持的任务列表如下表所示。
 - task dependencies：任务相关性定义了执行所需的先决条件任务。只有在完成所有先决条件相关任务后，才会启动该任务。
-- task arguments：任务参数包含执行任务所需的参数列表。它包含三个子字段，根据任务类型填充文本、图像和音频资源。它们是从用户的请求或相关任务的生成资源中解析的。不同任务类型的相应参数类型如下表所示。
-
-基于此，HuggingGPT融合了HuggingFce中成百上千的模型和GPT，可以解决24种任务，包括文本分类、对象检测、语义分割、图像生成、问答、文本语音转换和文本视频转换。支持的任务列表如下：
+- task arguments：任务参数包含执行任务所需的参数列表。它包含三个子字段，根据任务类型填充文本、图像和音频资源。它们是从用户的请求或相关任务的生成资源中解析的。不同任务类型的相应参数类型如下表所示。 
+在模板中规定了task的类型范围，HuggingGPT融合了HuggingFce中成百上千的模型和GPT，可以解决24种任务，包括文本分类、对象检测、语义分割、图像生成、问答、文本语音转换和文本视频转换。支持的任务列类型表如下：
 ![example](/image/task.png)
 
-
-
-HuggingGPT在接收到request后，将其解构为一个结构化任务的序列，并且需要识别这些任务之间的依赖关系和执行顺序。为了让LM做高效的任务规划，HuggingGPT在设计中使用specification-based instruction和demonstration-based parsing。
-
-![example](/image/model-selection.png)
-
-
-
-
-
-
-Specification-based Instruction
-Task specification提供一个统一的模板来允许LLM进行任务解析。HuggingGPT提供四个槽，分别是task type，task ID，task dependencies和task arguments：
-
-
-
-task id：任务的唯一标识符，用于依赖任务和生成资源的引用
-task type：不同的任务类型，可以在上表中看到
-task dependencies：该任务执行前的任务，该任务只会在所有的预任务(pre-requisite)执行后再执行
-task arguments：任务执行需要的arguments，在上表中可以看到
-Demonstration-based Parsing
-每个demonstration是一组在任务规划上的输入和输出，输入是用户的请求，输出是期望的任务序列。进一步而言，这些demonstration包含解析任务之间的依赖，有效帮助HuggingGPT理解任务之间的逻辑关系，并且决定执行顺序和资源依赖。
-
 ### 如何选择模型
-
-解析任务列表后，HuggingGPT 接下来需要匹配任务和模型，即为任务列表中的每个任务选择合适的模型。
-
+解析任务列表后，HuggingGPT 接下来需要匹配任务和模型，即为任务列表中的每个任务选择合适的模型。  
 为此，我们首先从 HuggingFace Hub 获得专家模型的描述，然后通过上下文中的任务模型分配机制为任务动态选择模型。这种做法允许增量模型访问（简单地提供专家模型的描述），并且更加开放和灵活。
+![example](/image/model-selection.png)
 
 HuggingFace Hub 上托管的专家模型附有全面的模型描述，这些描述通常由开发人员提供。这些描述包含有关模型的功能、体系结构、支持的语言和域、许可等方面的信息。这些信息有效地支持 HuggingGPT 根据用户请求和模型描述的相关性为任务选择正确模型的决定。
 
