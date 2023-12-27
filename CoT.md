@@ -1,5 +1,6 @@
 # 自我一致性（CoT）
-introduction about Prompt Engineering
+[introduction about Prompt Engineering](https://zhuanlan.zhihu.com/p/609739922)
+https://blog.csdn.net/qq_36426650/article/details/129814135
 
 
 Self-Consistency Improves Chain of Thought Reasoning in Language Models.、
