@@ -6,6 +6,7 @@ ReadAgent是模仿人类阅读过程，先分段摘要再回忆，谷歌新框�
 
 为了解决这些限制，来自Google DeepMind和Google Research的研究人员提出了一个全新的LLM系统ReadAgent，受人类如何交互式阅读长文档的启发，将有效上下文长度增加了20倍。
 ## ReadAgent框架介绍
+![example](/image/ReadAgent/workflow.png)  
 ### 要点记忆（gist memory）
 要点记忆是原始长上下文中文本块的短要点的有序集合，构建gist记忆有两个步骤：分页（pagination）和记忆提要（memory gisting）。  
 #### 片段分页（episode pagination）
