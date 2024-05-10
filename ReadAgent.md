@@ -6,31 +6,95 @@ ReadAgent是模仿人类阅读过程，先分段摘要再回忆，谷歌新框�
 
 为了解决这些限制，来自Google DeepMind和Google Research的研究人员提出了一个全新的LLM系统ReadAgent，受人类如何交互式阅读长文档的启发，将有效上下文长度增加了20倍。
 ## ReadAgent框架介绍
-![example](/image/ReadAgent/workflow.png)  
-### 要点记忆（gist memory）
+![example](/image/ReadAgent/PaginationPrompt.png)  
+### 1、要点记忆（gist memory）
 要点记忆是原始长上下文中文本块的短要点的有序集合，构建gist记忆有两个步骤：分页（pagination）和记忆提要（memory gisting）。  
 #### 片段分页（episode pagination）
 当ReadAgent阅读长文本时，通过选择暂停阅读的位置来决定在记忆片段中存储哪些内容。
 每一步都会为LLM提供部分文本，从上一个暂停点开始，并在达到最大单词数限制时结束；提示LLM选择段落之间的哪个点将是自然的暂停点，然后将前一个和当前暂停点之间的内容视为一个episode，也可以叫做页（page）。
-
+![example](/image/ReadAgent/workflow.png)  
 #### 记忆提要（memory gisting）
 对于每一页，提示LLM将确切的内容缩短为要点或摘要。
 
-
+![example](/image/ReadAgent/GistingPrompt.png)  
 目前的LLM技术仍然不完善，在构建 AGI 系统的过程中面临着一系列挑战：
 - 受限于文本生成的输入和输出形式，当前的 LLM 缺乏处理视觉和语音等复杂信息的能力。
 - 在现实世界的场景中，一些复杂的任务通常由多个子任务组成，因此需要多个模型的调度和协作。
 - 对于一些具有挑战性的任务，LLM 仍然比一些专家（例如，微调模型）弱。
 如何解决这些问题，可能是 LLM 迈向 AGI 系统的第一步，也是关键一步。  
 
-### 并行和顺序交互查找
+### 2、并行和顺序交互查找
 由于要点记忆与页相关，所以只需提示LLM来找出哪一页更像是答案，并在给定特定任务的情况下再次阅读，主要有两种查找策略：同时并行查找所有页面（ReadAgent-P）和每次查找一个页面（ReadAgent-S）。
 #### ReadAgent-P
 比如说，在问答任务中，通常会给LLM输入一个可以查找的最大页数，但也会指示其使用尽可能少的页面，以避免不必要的计算开销和干扰信息（distracting information）。
+![example](/image/ReadAgent/Parallel_lookup_Prompt.png)  
 
-
-ReadAgent-S
+#### ReadAgent-S
 顺序查找策略中，模型一次请求一页，在决定展开（expand）哪个页面之前，先查看之前展开过的页面，从而使模型能够访问比并行查找更多的信息，预期在某些特殊情况下表现得更好。
+但与模型的交互次数越多，其计算成本也越高。
+![example](/image/ReadAgent/Sequential_Lookup_Prompt.png)  
+
+### 3、计算开销和可扩展性
+片段分页、记忆提要和交互式查找需要迭代推理，也存在潜在的计算开销，但具体开销由一个小因子线性约束，使得该方法的计算开销不会输入长度的增加而剧烈提升。
+由于查找和响应大多是条件要点（conditioned gists）而非全文，所以在同一上下文中的任务越多，成本也就越低。
+
+
+### 4、ReadAgent变体
+当使用长文本时，用户可能会提前知道要解决的任务：在这种情况下，提要步骤可以在提示中包括任务描述，使得LLM可以更好地压缩与任务无关的信息，从而提高效率并减少干扰信息，即条件ReadAgent
+更通用的任务设置下，在准备提要时可能不知道具体任务，或者可能知道提出的要点需要用于多个不同的任务，例如回答关于文本的问题等。
+因此，通过排除注册步骤中的任务，LLM可以产生更广泛有用的提要，代价是减少压缩和增加干扰注意力的信息，即非条件ReadAgent。
+这篇论文中只探讨了无条件设置，但在某些情况下，条件设置可能更有优势。
+
+
+### 迭代提要（iterative gisting）
+对于一段很长的事件历史，例如对话等，可以考虑通过迭代提要来进一步压缩旧记忆来实现更长的上下文，对应于人类的话，旧记忆更模糊。
+
+
+## 实验结果
+研究人员评估了ReadAgent在三个长上下文问答挑战中的长文档阅读理解能力：QuALITY、NarrativeQA和QMSum。
+虽然ReadAgent不需要训练，但研究人员仍然选择在训练集上开发了一个模型并在验证、测试和/或开发集上进行了测试，以避免过拟合系统超参数的风险。
+选用的模型为指令微调后的PaLM 2-L模型。
+评估指标为压缩率（compression rate, CR），计算方法如下：
+
+
+
+### LLM评分器
+NarrativeQA和QMSum都有一个或多个自由形式的参考回复，通常使用诸如ROUGE-F之类的语法匹配度量来评估。
+除此之外，研究人员使用自动LLM评分器来评估这些数据集，作为人工评估的替代方法。
+![example](/image/ReadAgent/Strict_Permissive_LLM_Rater_Prompt.png)  
+
+上面两个提示中，「严格LLM评分器提示」用于判断是否存在精确匹配，「许可LLM评分器提示」用于判断是否存在精确匹配或部分匹配。
+基于此，研究人员提出了两个评价指标：LLM-Rating-1（LR-1）是一个严格的评估分数，计算所有示例中精确匹配的百分比；LLM-Rating-2（LR-2）计算精确匹配和部分匹配的百分比。
+
+### 长上下文阅读理解
+
+#### QuALITY
+QuALITY是一个多选问答任务，每个问题包含四个答案，使用来自多个不同来源的文本数据。
+![example](/image/ReadAgent/Histogram_of_QuALITY.png) 
+
+实验结果显示，ReadAgent（查找1-5页）实现了最好的结果，压缩率为66.97%（即提要后上下文窗口中可以容纳3倍的token）。
+当增加允许查找的最大页数（最多5页）时，性能会不断提高；在6页时，性能开始略有下降，即6页上下文可能会增加干扰信息。
+
+![example](/image/ReadAgent/QuALITY_results_on_the_dev_set.png) 
+
+#### NarrativeQA
+在三个阅读理解数据集中，NarrativeQA的平均上下文长度最长，为了将gists放入上下文窗口，需要扩展页面的尺寸大小。
+提要对Gutenburg文本（书籍）的压缩率为96.80%，对电影剧本的压缩率为91.98%。
+![example](/image/ReadAgent/NarrativeQA_results.png) 
+
+#### QMSum
+QMSum由各种主题的会议记录以及相关问题或说明组成，长度从1,000字到26,300字不等，平均长度约为10,000字，其答案是自由形式的文本，标准的评估指标是ROUGE-F
+![example](/image/ReadAgent/QMSum_validation_results.png) 
+可以看到性能随着压缩率的降低而提高，因此查找更多页面的技术往往比查找更少页面的技术做得更好。
+还可以看到ReadAgentS大大优于ReadAgent-P（以及所有基线），性能改进的代价是检索阶段的请求数量增加了六倍。
+
+
+
+
+
+
+
+
 
 
 ## 实例讲解
