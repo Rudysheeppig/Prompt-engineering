@@ -9,11 +9,11 @@ ReadAgent是模仿人类阅读过程，先分段摘要再回忆，谷歌新框�
 ![example](/image/ReadAgent/workflow.png)  
 ### 1、要点记忆（gist memory）
 要点记忆是原始长上下文中文本块的短要点的有序集合，构建gist记忆有两个步骤：分页（pagination）和记忆提要（memory gisting）。 
-![example](/image/ReadAgent/PaginationPrompt.png)  
+
 #### 片段分页（episode pagination）
 当ReadAgent阅读长文本时，通过选择暂停阅读的位置来决定在记忆片段中存储哪些内容。
 每一步都会为LLM提供部分文本，从上一个暂停点开始，并在达到最大单词数限制时结束；提示LLM选择段落之间的哪个点将是自然的暂停点，然后将前一个和当前暂停点之间的内容视为一个episode，也可以叫做页（page）。
-![example](/image/ReadAgent/workflow.png)  
+![example](/image/ReadAgent/PaginationPrompt.png)  
 #### 记忆提要（memory gisting）
 对于每一页，提示LLM将确切的内容缩短为要点或摘要。
 
